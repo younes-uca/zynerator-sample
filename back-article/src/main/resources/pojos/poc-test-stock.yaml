@@ -1,0 +1,49 @@
+Produit_MS(ms1)_IMPORT_INITIALISATION_ROLES(admin)_SUB-MODULE(referentiel)_MENU(Produit):
+    id: Long ID
+    reference: String REF_REQUIERED
+    libelle: String
+    barcode: String
+    discription: String
+    prixAchatMoyen: BigDecimal
+    quantite: BigDecimal
+    seuilAlert: BigDecimal
+    categorieProduit: CategorieProduit
+
+CategorieProduit_MS(ms1)_IMPORT_INITIALISATION_SUB-MODULE(referentiel)_MENU(Produit):
+    id: Long ID
+    reference: String REF_REQUIERED
+    libelle: String
+
+Achat_WITH-STEP_MS(ms1)_ROLES(admin)_SUB-MODULE(stock)_MENU(Achat):
+    id: Long ID
+    reference: String REF_REQUIERED_STEP(1)
+    dateAchat: LocalDateTime STEP(1)
+    total: BigDecimal STEP(1)
+    totalPaye: BigDecimal STEP(2)
+    description: String LARGE_STEP(2)
+    client: Client STEP(2)
+    achatItems: AchatItem List_STEP(3)
+
+AchatItem_IGNORE-FRONT_MS(ms1)_ROLES(admin)_SUB-MODULE(stock)_MENU(Achat):
+    id: Long ID
+    produit: Produit REQUIERED
+    prixUnitaire: BigDecimal REQUIERED
+    prixVente: BigDecimal REQUIERED
+    quantite: BigDecimal REQUIERED
+    quantiteAvoir: BigDecimal
+    remise: BigDecimal
+    achat: Achat
+
+Client_MS(ms1)_IMPORT_INITIALISATION_ROLES(admin)_SUB-MODULE(stock)_MENU(Vente):
+    id: Long ID
+    cin: String REF_REQUIERED
+    nom: String LABEL_REQUIERED
+    tel: String
+    email: String
+    adresse: String
+    description: String LARGE
+    creance: BigDecimal
+
+$CONFIG:
+    ms: "{name=ms1, packaging=myms1, url=http://localhost:8090/api/v1}"
+    currentMs: ms1

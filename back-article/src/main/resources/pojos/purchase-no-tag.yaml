@@ -1,0 +1,37 @@
+Purchase_MS(ms1)_ROLES(admin)_SUB-MODULE(flos)_MENU(Purchase Management,pi pi-fw pi-pencil)_ICON(pi pi-check):
+    id: Long ID
+    reference: String REF_REQUIERED CALENDAR-LABEL
+    purchaseStartDate: LocalDateTime CALENDAR-START
+    purchaseEndDate: LocalDateTime CALENDAR-END
+    image: String
+    etat: Boolean
+    total: BigDecimal
+    description: String LARGE
+    client: Client SEARCH-MULT
+    purchaseItems: PurchaseItem List
+
+PurchaseItem_IGNORE-FRONT_MS(ms1)_ROLES(admin)_SUB-MODULE(flos)_MENU(Purchase Management,pi pi-fw pi-pencil)_ICON(pi pi-check):
+    id: Long ID
+    product: Product REQUIERED
+    price: BigDecimal REQUIERED
+    quantity: BigDecimal REQUIERED
+    purchase: Purchase
+
+Product_MS(ms1)_ROLES(admin)_SUB-MODULE(commun)_MENU(Product Management,pi pi-fw pi-pencil)_ICON(pi pi-check):
+    id: Long ID
+    code: String REF_REQUIERED
+    reference: String LABEL_REQUIERED
+
+
+Client_MS(ms1)_INIT_ROLES(admin,superadmin)_SUB-MODULE(commun)_MENU(Collaborator,pi pi-fw pi-pencil)_ICON(pi pi-check):
+    id: Long ID
+    fullName: String LABEL_REQUIERED
+    clientCategory: ClientCategory
+
+ClientCategory_MS(ms1)_ROLES(admin,superadmin)_SUB-MODULE(commun)_MENU(Collaborator,pi pi-fw pi-pencil)_ICON(pi pi-check):
+    id: Long ID
+    reference: String LABEL_REQUIERED
+    code: String REF_REQUIERED
+
+$CONFIG:
+    ms: "{name=ms1,packaging=myms1,url=localhost:8090/api/v1};{name=ms2,packaging=myms2,url=localhost:8091/api/v1}"

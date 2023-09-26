@@ -1,0 +1,198 @@
+#----------------------- Ordre --------------------------
+DemandeRdv_INITIALISATION_EXPORT_MS(ms1)_ROLES(admin)_SUB-MODULE(rdv)_MENU(Gestion RDV)_Process(save,validate):
+    id: Long ID
+    reference: String REF_REQUIERED
+    patient: Patient REQUIERED
+    ipp: String REQUIERED
+    nom: String REQUIERED
+    prenom: String REQUIERED
+    adresse: String LARGE_REQUIERED
+    email: String REQUIERED
+    cin: String REQUIERED
+    codeRamed: String
+    observation: String LARGE_REQUIERED
+    operateur: Operateur FIND_DELETE
+    centreHospitalierUniversitaire: CentreHospitalierUniversitaire
+    hopital: Hopital FIND_DELETE
+    uniteAdministrative: UniteAdministrative FIND_DELETE
+    prestation: Prestation FIND_DELETE
+    statusRdv: StatusRdv
+    ficheReferencePath: String REQUIERED
+    causeRejetDemandeRdv: CauseRejetDemandeRdv
+    dateDemandeRdv: LocalDateTime
+    datePrevu: LocalDateTime
+    dateEffective: LocalDateTime
+    dateValidation: LocalDateTime
+    dateRejet: LocalDateTime
+    nombreReccurenceTotal: Integer
+    nombreReccurenceValide: Integer
+    nombreReccurenceRejet: Integer
+    templateEmailConfirmation: TemplateEmailConfirmation
+
+    #----everything is good here
+
+
+#----------------------- Configuration --------------------------
+JourFerie_EXPORT_MS(ms1)_ROLES(admin)_SUB-MODULE(configuration)_MENU(Configuration):
+    id: Long ID
+    code: String REF_REQUIERED
+    libelle: String LABEL_REQUIERED
+    dateDebut: LocalDateTime REQUIERED
+    dateFin: LocalDateTime REQUIERED
+    nombreJoursTotal: Long
+
+    #-- in case there is no work in holidays
+
+TemplateEmailConfirmation_REFERENTIEL_EXPORT_MS(ms1)_ROLES(admin)_SUB-MODULE(configuration)_MENU(Configuration):
+    id: Long ID
+    libelle: String LABEL_REQUIERED
+    objet: String REQUIERED
+    corps: String LARGE_REQUIERED
+    actif: Boolean
+
+    #---clear
+
+CauseRejetDemandeRdv_EXPORT_MS(ms1)_ROLES(admin)_SUB-MODULE(configuration)_MENU(Configuration):
+    id: Long ID
+    libelle: String LABEL_REQUIERED
+    code: String REQUIERED
+
+    #---clear
+
+StatusRdv_INITIALISATION_EXPORT_MS(ms1)_ROLES(admin)_SUB-MODULE(configuration)_MENU(Configuration):
+    id: Long ID
+    libelle: String LABEL_REQUIERED
+    code: String REQUIERED
+    style: String REQUIERED
+
+    #---clear
+
+#----------------------- Patient --------------------------
+
+Patient_INITIALISATION_EXPORT_MS(ms1)_ROLES(admin)_SUB-MODULE(patient)_MENU(Patient):
+    id: Long ID
+    ipp: String REF_REQUIERED
+    adresse: String LARGE_REQUIERED
+    email: String REQUIERED
+    cin: String REQUIERED
+    codeRamed: String
+
+    #----clear, but in case the patient is not in the database, we can use the input to create a new rdv with his data
+
+#----------------------- Operator --------------------------
+CelluleValidation_REFERENTIEL_INITIALISATION_EXPORT_MS(ms1)_ROLES(admin)_SUB-MODULE(operator)_MENU(Operateur Management):
+    id: Long ID
+    libelle: String LABEL_REQUIERED
+    code: String REF_REQUIERED
+    description: String LARGE
+    email: String
+    phone: String
+
+    #---- the validation center
+
+Operateur_INITIALISATION_EXPORT_MS(ms1)_ROLES(admin)_SUB-MODULE(operator)_MENU(Operateur Management):
+    id: Long ID
+    cin: String LABEL_REQUIERED
+    dateNaissance: LocalDateTime
+    passport: String
+    celluleValidation: CelluleValidation
+    operateurAgendas: OperateurAgenda List
+    operateurHoraireTravailleValidations: OperateurHoraireTravailleValidation List
+    operateurUniteAdministratives: OperateurUniteAdministrative List
+    operateurQuotas: OperateurQuota List
+
+OperateurQuota_EXPORT_MS(ms1)_ROLES(admin)_SUB-MODULE(operator)_MENU(Operateur Management):
+    id: Long ID
+    operateur: Operateur REQUIERED
+    prestation: Prestation REQUIERED
+    nombreMaxRdv: Integer REQUIERED
+
+    #---- required to only allow the operator to accept a specific amount of rdvs
+
+OperateurAgenda_EXPORT_MS(ms1)_ROLES(admin)_SUB-MODULE(operator)_MENU(Operateur Management):
+    id: Long ID
+    agenda: Agenda REQUIERED
+    operateur: Operateur REQUIERED
+    heureDebut: String REQUIERED
+    heureFin: String REQUIERED
+
+
+Agenda_EXPORT_MS(ms1)_ROLES(admin)_SUB-MODULE(operator)_MENU(Operateur Management):
+    id: Long ID
+    libelle: String LABEL_REQUIERED
+    daysOfMonth: String REQUIERED
+    month: Integer REQUIERED
+    annee: Integer REQUIERED
+    uniteAdministrative: UniteAdministrative
+
+    #------days of month and month and year of each uniteAdministrative
+
+
+OperateurHoraireTravailleValidation_EXPORT_MS(ms1)_ROLES(admin)_SUB-MODULE(operator)_MENU(Operateur Management):
+    id: Long ID
+    horaireTravailleValidation: HoraireTravailleValidation
+    operateur: Operateur REQUIERED
+    heureDebut: String REQUIERED
+    heureFin: String REQUIERED
+
+
+HoraireTravailleValidation_EXPORT_MS(ms1)_ROLES(admin)_SUB-MODULE(operator)_MENU(Operateur Management):
+    id: Long ID
+    libelle: String LABEL_REQUIERED
+    daysOfWeek: String REQUIERED
+    month: String REQUIERED
+    heureDebut: String
+    heureFin: String
+
+    #----- the working hours of each day when the operator can validate the rdvs
+
+
+OperateurUniteAdministrative_EXPORT_MS(ms1)_ROLES(admin)_SUB-MODULE(operator)_MENU(Operateur Management):
+    id: Long ID
+    uniteAdministrative: UniteAdministrative
+    operateur: Operateur
+
+#----------------------- Hopital --------------------------
+CentreHospitalierUniversitaire_INITIALISATION_EXPORT_MS(ms1)_ROLES(admin)_SUB-MODULE(hopital)_MENU(Hopital Management):
+    id: Long ID
+    libelle: String LABEL_REQUIERED
+    code: String REF_REQUIERED
+    description: String LARGE
+    hopitals: Hopital List
+
+Hopital_INITIALISATION_EXPORT_MS(ms1)_ROLES(admin)_SUB-MODULE(hopital)_MENU(Hopital Management):
+    id: Long ID
+    libelle: String LABEL_REQUIERED
+    code: String REF_REQUIERED
+    description: String LARGE
+    centreHospitalierUniversitaire: CentreHospitalierUniversitaire
+    uniteAdministratives: UniteAdministrative List
+
+UniteAdministrative_INITIALISATION_EXPORT_MS(ms1)_ROLES(admin)_SUB-MODULE(hopital)_MENU(Hopital Management):
+    id: Long ID
+    libelle: String LABEL_REQUIERED
+    code: String REF_REQUIERED
+    description: String LARGE
+    prestations: Prestation List
+    hopital: Hopital FIND_DELETE
+
+Prestation_EXPORT_MS(ms1)_ROLES(admin)_SUB-MODULE(hopital)_MENU(Hopital Management):
+    id: Long ID
+    libelle: String LABEL_REQUIERED
+    code: String REQUIERED
+    typePrestation: TypePrestation REQUIERED
+    dureeEnMiniute: Integer REQUIERED #
+    uniteAdministrative: UniteAdministrative
+
+TypePrestation_EXPORT_MS(ms1)_ROLES(admin)_SUB-MODULE(hopital)_MENU(Hopital Management):
+    id: Long ID
+    libelle: String LABEL_REQUIERED
+    code: String REF_REQUIERED
+
+
+#$INITIALISATION:
+#    StatusRdv: '{code=initier,libelle=Initié,style=blue};{code=en-cours,libelle=En cours,style=orange};{code=livre,libelle=Livré,style=green}'
+
+$CONFIG:
+    ms: '{name=ms1, packaging=myms1, url=http://localhost:8090/api/v1}'
+    currentMs: ms1

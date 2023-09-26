@@ -1,0 +1,35 @@
+Purchase_MS(ms1)_ROLES(admin)_SUB-MODULE(flos):
+    id: Long ID
+    reference: String REF_REQ
+    purchaseStartDate: LocalDateTime
+    purchaseEndDate: LocalDateTime
+    total: BigDecimal
+    description: String LARGE
+    client: Client SEARCH-MULT
+    purchaseItems: PurchaseItem List
+
+PurchaseItem_MS(ms1)_ROLES(admin)_SUB-MODULE(flos):
+    id: Long ID
+    product: Product REQ
+    price: BigDecimal REQ
+    quantity: BigDecimal REQ
+    purchase: Purchase
+
+Product_MS(ms1)_ROLES(admin)_NO-SEQ_SUB-MODULE(commun):
+    id: Long ID
+    code: String REF_REQ
+    reference: String LABEL_REQ
+
+
+Client_MS(ms1)_INIT_ROLES(admin)_SUB-MODULE(commun):
+    id: Long ID
+    fullName: String LABEL_REQ
+    clientCategory: ClientCategory
+
+ClientCategory_MS(ms1)_ROLES(admin)_HISTORY_SUB-MODULE(commun):
+    id: Long ID
+    reference: String LABEL_REQ
+    code: String REF_REQ
+
+$CONFIG:
+    ms: "{name=ms1,packaging=myms1,url=localhost:8090/api/v1};{name=ms2,packaging=myms2,url=localhost:8091/api/v1}"

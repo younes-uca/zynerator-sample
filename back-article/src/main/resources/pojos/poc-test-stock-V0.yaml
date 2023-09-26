@@ -1,0 +1,49 @@
+Produit_MS(ms1)_IMPORT_INITIALISATION_ROLES(admin)_SUB-MODULE(commun)_MENU(Produit):
+    id: Long ID
+    reference: String REF_REQUIERED
+    libelle: String
+    barcode: String
+    discription: String
+    prixAchatMoyen: BigDecimal
+    quantite: BigDecimal
+    seuilAlert: BigDecimal
+    categorieProduit: CategorieProduit
+
+CategorieProduit_MS(ms1)_IMPORT_INITIALISATION_SUB-MODULE(commun)_MENU(Produit):
+    id: Long ID
+    reference: String REF_REQUIERED
+    libelle: String
+
+Achat_MS(ms1)_ROLES(admin)_SUB-MODULE(stock)_MENU(Achat):
+    id: Long ID
+    reference: String REF_REQUIERED
+    dateAchat: LocalDateTime
+    total: BigDecimal
+    totalPaye: BigDecimal
+    description: String LARGE
+    client: Client
+    achatItems: AchatItem List
+
+AchatItem_IGNORE-FRONT_MS(ms1)_ROLES(admin)_SUB-MODULE(stock)_MENU(Achat):
+    id: Long ID
+    produit: Produit REQUIERED
+    prixUnitaire: BigDecimal REQUIERED
+    prixVente: BigDecimal REQUIERED
+    quantite: BigDecimal REQUIERED
+    quantiteAvoir: BigDecimal
+    remise: BigDecimal
+    achat: Achat
+
+Client_MS(ms1)_IMPORT_INITIALISATION_ROLES(admin)_SUB-MODULE(stock)_MENU(Vente):
+    id: Long ID
+    cin: String REF_REQUIERED
+    nom: String LABEL_REQUIERED
+    tel: String
+    email: String
+    adresse: String
+    description: String LARGE
+    creance: BigDecimal
+
+$CONFIG:
+    ms: "{name=ms1, packaging=myms1, url=http://localhost:8090/api/v1}"
+    currentMs: ms1

@@ -1,0 +1,325 @@
+# question ??? reunion a 15h00
+#----------------------- Remarques --------------------------
+#Modalite radio ::: 3D, VMAT, Stéréotaxie
+
+#Figure 12: Formulaire décision  :::: Protocole chimio ==?== ProtocoleInclusion
+
+#La formule de calcul est de récupérer la date début 1ere séance depuis de la champ «Date souhaité début traitement»
+#fractionné sur plusieurs lignes selon le champ «Fraction» et espacé du nb de jour selon le champ «séquence» complété.
+
+# Type Consultation
+#  Consultation de suivi de Radiothérapie externe
+#  Consultation d’application (Curiethérapie)
+#  Visite Pré anesthésique (Curiethérapie)
+#
+
+#Figure 19: Rubrique radiothérapie- étape de traitement  ==> CR de type Formulaore dynamic ==> JsonB
+#save de sceance il faut tenir en compte les samedi et les dimanche
+
+#TypeToxiciteRth GradeToxicite ==> module chimio
+# 1- communication avec back end (ms) 2- combo ou text (Immobilistion) ::: ajouter un champs valide(boolean)
+# 2- ajouter currentUser
+#_PROCESS(save[admin],simuler[admin],validatePhysicien[admin],validateRadiotherapeute[admin],suivreConsultation[admin],finirTraitement[admin])
+# add postCreate and preCreate
+#----------------------- Core --------------------------
+PrescriptionRadiotherapie_MS(ms1)_ROLES(admin)_SUB-MODULE(rdv)_MENU(Gestion RDV)_PROCESS(save[admin];simuler[admin];validatePhysicien;suivreConsultation;finirTraitement):
+    id: Long ID
+    #prescription
+    decisionTraitement: DecisionTraitement #to be checked ^plz add not only dto but also code of the dto
+    datePrescription: LocalDateTime
+    medecinPrescripteur: Personnel
+    site: Site
+    modaliteRadiotherapie: ModaliteRadiotherapie
+    visee: Visee
+    rcc: Boolean
+    protocoleInclusion: ProtocoleInclusion
+    dose: BigDecimal
+    fractionnement: Integer
+    etalement: Integer
+    frequenceRadiotherapie: FrequenceRadiotherapie #enum
+    dateSouhaiteDebutTraitement: LocalDateTime
+    observation: String LARGE
+    statutRadiotherapie: StatutRadiotherapie #enum
+    #simulation
+    dateSimulation: LocalDateTime
+    immobilisation: Immobilisation #laisser la table referentiel mais on associe via un simple string
+    positionnement: Positionnement #laisser la table referentiel mais on associe via un simple string
+    fichierTraitements: String
+
+    #validation simulation
+    validateurSimulation: Personnel
+    validateurSimulationDate: LocalDateTime
+
+    #suivi consultation
+    consultationRadiotherapies: ConsultationRadiotherapie List
+
+    #étape de fin de traitement
+    datePrevu: LocalDateTime
+    dateDebutTraitement: LocalDateTime
+    dateFinTraitement: LocalDateTime
+    dateDecisionTraitement: LocalDateTime
+    compteRendu: String Large
+    seanceRadiotherapies: SeanceRadiotherapie List
+    histortiquePrescriptionRadiotherapies: HistortiquePrescriptionRadiotherapie List
+
+
+    #deduced
+    actif: Boolean
+    nombreSeanceRealise: Integer
+    nombreTotalSeance: Integer
+    typeToxiciteRth: TypeToxiciteRth
+    gradeToxiciteRth: GradeToxiciteRth
+
+    patient: Patient
+    #remarque madam Kettani
+    typeTraitement: TypeTraitement #enum
+    motifSuspension: MotifSuspension
+    motifAnnulation: MotifAnnulation
+
+MotifSuspension_REF_MS(ms1)_ROLES(admin)_SUB-MODULE(rdv)_MENU(Gestion RDV):
+    id: Long ID
+    code: String REF_REQUIERED
+    libelle: String LABEL_REQUIERED
+    style: String
+
+MotifAnnulation_REF_MS(ms1)_ROLES(admin)_SUB-MODULE(rdv)_MENU(Gestion RDV):
+    id: Long ID
+    code: String REF_REQUIERED
+    libelle: String LABEL_REQUIERED
+    style: String
+
+StatutRadiotherapie_STATE_MS(ms1)_ROLES(admin)_SUB-MODULE(rdv)_MENU(Gestion RDV):
+    id: Long ID
+    code: String REF_REQUIERED
+    libelle: String LABEL_REQUIERED
+    style: String
+
+TypeTraitement_STATE_MS(ms1)_ROLES(admin)_SUB-MODULE(rdv)_MENU(Gestion RDV):
+    id: Long ID
+    code: String REF_REQUIERED
+    libelle: String LABEL_REQUIERED
+    style: String
+
+HistortiquePrescriptionRadiotherapie_MS(ms1)_ROLES(admin)_SUB-MODULE(rdv)_MENU(Gestion RDV):
+    id: Long ID
+    dateHistortiquePrescriptionRadiotherapie: LocalDateTime
+    prescriptionRadiotherapie: PrescriptionRadiotherapie
+    statutRadiotherapie: StatutRadiotherapie
+    description: String LARGE
+
+
+ConsultationRadiotherapie_MS(ms1)_ROLES(admin)_PROCESS(save[admin])_SUB-MODULE(rdv)_MENU(Gestion RDV):
+    id: Long ID
+    dateConsultation: LocalDateTime
+    medecin: Personnel
+    specialite: Specialite
+    typeConsultationRadiotherapie: TypeConsultationRadiotherapie
+    typeToxiciteRth: TypeToxiciteRth
+    gradeToxiciteRth: GradeToxiciteRth
+    classificationOms: ClassificationOms
+    observation: String LARGE
+    statutMedicaleConsultationRadiotherapie: StatutMedicaleConsultationRadiotherapie
+    prescriptionRadiotherapie: PrescriptionRadiotherapie
+
+
+SeanceRadiotherapie_MS(ms1)_ROLES(admin)_SUB-MODULE(rdv)_MENU(Gestion RDV):
+    id: Long ID
+    codeRdv: String
+    datePrevu: LocalDateTime
+    dateRealisation: LocalDateTime
+    numero: Integer
+    effectue: Boolean
+    cr: String
+    fichiers: String
+    prescriptionRadiotherapie: PrescriptionRadiotherapie
+
+DecisionTraitement_MS(ms1)_ROLES(admin)_SUB-MODULE(rdv)_MENU(Gestion RDV): #put it in ms2 and change generator behaviour
+    id: Long ID
+    code: String REF_REQUIERED
+    dateDecisionTraitement: LocalDateTime
+    decisionTherapeutique: DecisionTherapeutique
+    statutRadiotherapie: StatutRadiotherapie
+    urgence: Boolean
+#----------------------- ENUM --------------------------
+
+
+#----------------------- Referentiel --------------------------
+
+Specialite_MS(ms1)_ROLES(admin)_SUB-MODULE(rdv)_MENU(Gestion RDV):
+    id: Long ID
+    code: String REF_REQUIERED
+    libelle: String LABEL_REQUIERED
+    services: Services
+
+
+ClassificationOms_MS(ms1)_ROLES(admin)_SUB-MODULE(rdv)_MENU(Gestion RDV):
+    id: Long ID
+    code: String REF_REQUIERED
+    libelle: String LABEL_REQUIERED
+    services: Services
+
+StatutMedicaleConsultationRadiotherapie_MS(ms1)_ROLES(admin)_SUB-MODULE(rdv)_MENU(Gestion RDV):
+    id: Long ID
+    code: String REF_REQUIERED
+    libelle: String LABEL_REQUIERED
+    services: Services
+
+DecisionTherapeutique_MS(ms1)_ROLES(admin)_SUB-MODULE(rdv)_MENU(Gestion RDV):
+    id: Long ID
+    name: String REF_REQUIERED
+    displayText: String LABEL_REQUIERED
+    services: Services
+
+ProtocoleInclusion_MS(ms1)_ROLES(admin)_SUB-MODULE(rdv)_MENU(Gestion RDV):
+    id: Long ID
+    code: String REF_REQUIERED
+    libelle: String LABEL_REQUIERED
+    dateInclusion: LocalDateTime
+    protocoleInclusionStatut: ProtocoleInclusionStatut #enum
+    services: Services
+    
+
+TypeToxiciteRth_MS(ms1)_ROLES(admin)_SUB-MODULE(rdv)_MENU(Gestion RDV):
+    id: Long ID
+    code: String REF_REQUIERED
+    libelle: String LABEL_REQUIERED
+    services: Services
+
+ProtocoleInclusionStatut_MS(ms1)_ROLES(admin)_SUB-MODULE(rdv)_MENU(Gestion RDV):
+    id: Long ID
+    name: String REF_REQUIERED
+    displayText: String LABEL_REQUIERED
+    services: Services
+
+GradeToxiciteRth_MS(ms1)_ROLES(admin)_SUB-MODULE(rdv)_MENU(Gestion RDV):
+    id: Long ID
+    code: String REF_REQUIERED
+    libelle: String LABEL_REQUIERED
+    services: Services
+
+
+
+Specialite_MS(ms1)_ROLES(admin)_SUB-MODULE(hopital)_MENU(Hopital Management):
+    id: Long ID
+    code: String REF_REQUIERED
+    libelle: String LABEL_REQUIERED
+    services: Services
+    
+
+
+TypeConsultationRadiotherapie_MS(ms1)_ROLES(admin)_SUB-MODULE(hopital)_MENU(Hopital Management):
+    id: Long ID
+    code: String REF_REQUIERED
+    libelle: String LABEL_REQUIERED
+    services: Services
+    
+
+Immobilisation_MS(ms1)_ROLES(admin)_SUB-MODULE(hopital)_MENU(Hopital Management):
+    id: Long ID
+    code: String REF_REQUIERED
+    libelle: String LABEL_REQUIERED
+    immobilisationServicess: ImmobilisationServices List
+
+
+ImmobilisationServices_MS(ms1)_ROLES(admin)_SUB-MODULE(hopital)_MENU(Hopital Management):
+    id: Long ID
+    immobilisation: Immobilisation
+    services: Services
+
+
+
+Positionnement_MS(ms1)_ROLES(admin)_SUB-MODULE(hopital)_MENU(Hopital Management):
+    id: Long ID
+    code: String REF_REQUIERED
+    libelle: String LABEL_REQUIERED
+    positionnementServicess: PositionnementServices List
+
+PositionnementServices_MS(ms1)_ROLES(admin)_SUB-MODULE(hopital)_MENU(Hopital Management):
+    id: Long ID
+    positionnement: Positionnement
+    services: Services
+
+
+FrequenceRadiotherapie_MS(ms1)_ROLES(admin)_SUB-MODULE(rdv)_MENU(Gestion RDV):
+    id: Long ID
+    code: String REF_REQUIERED
+    libelle: String REQUIERED
+    description: String LARGE
+    services: Services
+    
+
+
+ModaliteRadiotherapie_MS(ms1)_ROLES(admin)_SUB-MODULE(rdv)_MENU(Gestion RDV):
+    id: Long ID
+    code: String REF_REQUIERED
+    libelle: String LABEL_REQUIERED
+    description: String LARGE
+    services: Services
+    
+    
+
+Site_MS(ms1)_ROLES(admin)_SUB-MODULE(rdv)_MENU(Gestion RDV):
+    id: Long ID
+    code: String REF_REQUIERED
+    libelle: String LABEL_REQUIERED
+    services: Services
+    
+
+
+Patient_MS(ms1)_ROLES(admin)_SUB-MODULE(patient)_MENU(Patient):
+    id: Long ID
+    ipp: String REF_REQUIERED
+    nom: String
+    prenom: String
+    sexe: String
+    dateNaissance: LocalDateTime # change to localDate
+    numeroDeClassement: String
+    age: Integer
+
+Personnel_MS(ms1)_ROLES(admin)_SUB-MODULE(patient)_MENU(Patient):
+    id: Long ID
+    ipp: String REF_REQUIERED
+    adresse: String LARGE
+    nom: String REQUIERED
+    prenom: String REQUIERED
+    cin: String
+    telephone: String
+    email: String
+    mobile: String
+    expertise: Boolean
+    categoriePersonnel: CategoriePersonnel
+    specialite: Specialite
+    
+
+Visee_MS(ms1)_ROLES(admin)_SUB-MODULE(rdv)_MENU(Gestion RDV):
+    id: Long ID
+    code: String REF_REQUIERED
+    libelle: String LABEL_REQUIERED
+    description: String LARGE
+    services: Services
+
+
+
+
+CategoriePersonnel_MS(ms1)_ROLES(admin)_SUB-MODULE(hopital)_MENU(Hopital Management):
+    id: Long ID
+    libelle: String LABEL_REQUIERED
+    code: String REF_REQUIERED
+    services: Services
+    
+Services_MS(ms1)_ROLES(admin)_SUB-MODULE(hopital)_MENU(Hopital Management):
+    id: Long ID
+    code: String REF_REQUIERED
+    libelle: String LABEL_REQUIERED
+    description: String LARGE
+
+$CONFIG:
+    ms: "{name=ms1, packaging=radio, url=http://localhost:8090/api/v1} ; {name=ms2, packaging=dmc, url=http://localhost:8091/api/v1}"
+#    ms: "{name=ms1, packaging=myms1, url=http://localhost:8090/api/v1}"
+    currentMs: ms1
+
+
+$PROCESS_CONFIG_Radiotherapie_save:
+    init: "{action=find, attribute=code, object=frequenceRadiotherapie} ; {action=findCurrentUser, object=medecinPrescripteur} ; {name=find, attribute=code, object=protocoleInclusion}"
+    validate: "{operator=notNull, attribute=frequenceRadiotherapie} ; {operator=notNull, attribute=fractionnement}; {operator=notNull, attribute=etalement} "
+    exec: "{action=loop, name=constructSeanceRadiotherapies, object=seanceRadiotherapies} ; {action=save} ; {action=save, name=saveSeanceRadiotherapies, object=seanceRadiotherapies}"

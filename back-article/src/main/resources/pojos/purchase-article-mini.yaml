@@ -1,0 +1,32 @@
+Product_MS(ms1)_IMPORTABLE_INITIALISATION_ROLES(admin)_SUB-MODULE(purchase)_MENU(Product Management):
+    id: Long ID
+    code: String REF_REQUIERED
+    reference: String LABEL_REQUIERED
+
+Purchase_MS(ms1)_ROLES(admin)_SUB-MODULE(purchase)_MENU(Purchase Management):
+    id: Long ID
+    reference: String REF_REQUIERED
+    purchaseDate: LocalDateTime
+    image: String UPLOAD-ONE
+    total: BigDecimal
+    description: String LARGE
+    client: Client SEARCH-MULT
+    purchaseItems: PurchaseItem List
+
+PurchaseItem_IGNORE-FRONT_MS(ms1)_ROLES(admin)_SUB-MODULE(purchase)_MENU(Purchase Management):
+    id: Long ID
+    product: Product REQUIERED
+    price: BigDecimal REQUIERED
+    quantity: BigDecimal REQUIERED
+    purchase: Purchase
+
+Client_MS(ms1)_INITIALISATION_ROLES(admin)_SUB-MODULE(purchase)_MENU(Collaborator):
+    id: Long ID
+    fullName: String LABEL_REQUIERED
+    email: String REF_REQUIERED
+
+
+$CONFIG:
+    ms: "{name=ms1, packaging=radio, url=http://localhost:8090/api/v1}"
+    #    ms: "{name=ms1, packaging=myms1, url=http://localhost:8090/api/v1}"
+    currentMs: ms1

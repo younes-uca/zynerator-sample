@@ -1,0 +1,41 @@
+Product_MS(ms1)_REF_INIT_ROLES(admin)_SUB-MODULE(commun)_MENU(Product Management):
+    id: Long ID
+    code: String REF_REQUIERED
+    reference: String LABEL_REQUIERED
+Purchase_MS(ms1)_IMPORT_PROCESS(save[admin,agent];delete[admin])_ROLES(admin)_SUB-MODULE(purchase)_MENU(Purchase Management):
+    id: Long ID
+    reference: String REF_REQUIERED
+    purchaseDate: LocalDateTime
+    image: String UPLOAD-ONE
+    total: BigDecimal
+    description: String LARGE
+    client: Client SEARCH-MULT
+    purchaseItems: PurchaseItem List
+    purchaseTags: PurchaseTag List
+PurchaseTag_MS(ms1)_REF_INIT_ROLES(admin)_SUB-MODULE(commun)_MENU(Purchase Management):
+    id: Long ID
+    purchase: Purchase
+    tag: Tag
+Tag_MS(ms1)_REF_INIT_ROLES(admin)_SUB-MODULE(commun)_MENU(Tag Management):
+    id: Long ID
+    code: String REF_REQUIERED
+    reference: String LABEL_REQUIERED
+PurchaseItem_IGNORE-FRONT_MS(ms1)_ROLES(admin)_SUB-MODULE(purchase)_MENU(Purchase Management):
+    id: Long ID
+    product: Product REQUIERED
+    price: BigDecimal REQUIERED
+    quantity: BigDecimal REQUIERED
+    purchase: Purchase
+
+Client_MS(ms2)_INIT_ROLES(admin)_SUB-MODULE(commun)_MENU(Collaborator):
+    id: Long ID
+    fullName: String LABEL_REQUIERED
+    email: String REF_REQUIERED
+    clientCategory: ClientCategory
+ClientCategory_MS(ms2)_INIT_ROLES(admin)_SUB-MODULE(commun)_MENU(Collaborator):
+    id: Long ID
+    reference: String LABEL_REQUIERED
+    code: String REF_REQUIERED
+
+$CONFIG:
+    ms: "{name=ms1,packaging=myms1,url=localhost:8090/api/v1};{name=ms2,packaging=myms2,url=localhost:8091/api/v1}"
