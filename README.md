@@ -43,6 +43,7 @@ To run the front-end project:
    ```shell
    npm install
    If you encounter issues, you can force the download using:
+   
    ```shell
    npm install -f
 2. Start the project using:
